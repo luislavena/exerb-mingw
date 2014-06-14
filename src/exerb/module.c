@@ -75,7 +75,7 @@ rb_exerbruntime_s_open(VALUE self, VALUE filename)
 	if ( !name_entry ) rb_raise(rb_eLoadError, "No such file to load -- %s", RSTRING_PTR(filename));
 
 	FILE_ENTRY_HEADER *file_entry = exerb_find_file_entry(name_entry->id);
-	VALUE file = rb_str_new(exerb_get_file_from_entry(file_entry), file_entry->size_of_file);
+	VALUE file = exerb_get_file_from_entry2(file_entry);
 
 	return rb_funcall(rb_path2class("StringIO"), rb_intern("new"), 2, file, rb_str_new2("r"));
 }

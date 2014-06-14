@@ -2,19 +2,7 @@
 #==============================================================================#
 # $Id: rubytk.rb,v 1.3 2006/07/06 04:26:40 yuya Exp $
 #==============================================================================#
-
-def autoload(mod, fname)
-end
-
-TkEvent = Module.new
-TkPack  = Module.new
-TkWinfo = Module.new
-
 require "tk"
-require "tk/event"
-require "tk/winfo"
-require "tk/button"
-require "tk/pack"
 
 #==============================================================================#
 

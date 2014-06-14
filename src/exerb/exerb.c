@@ -471,7 +471,7 @@ exerb_load_ruby_script(const FILE_ENTRY_HEADER *file_entry)
 	VALUE binding = rb_const_get(rb_mKernel, rb_intern("TOPLEVEL_BINDING"));
 	VALUE lineno  = INT2FIX(1);
 	
-	const VALUE code = rb_str_new(exerb_get_file_from_entry(file_entry), file_entry->size_of_file);
+	const VALUE code = exerb_get_file_from_entry2(file_entry);
 	const VALUE name = rb_str_new2(exerb_get_name_from_entry(exerb_find_name_entry(file_entry->id)));
 
 	return rb_funcall(rb_mKernel, id_eval, 4, code, binding, name, lineno);
@@ -489,7 +489,7 @@ static VALUE
 exerb_load_compiled_script(const FILE_ENTRY_HEADER *file_entry)
 {
 	ID id_eval = rb_intern("eval");
-	const VALUE code     = rb_str_new(exerb_get_file_from_entry(file_entry), file_entry->size_of_file);
+	const VALUE code     = exerb_get_file_from_entry2(file_entry);
 	const VALUE iseq_ary = rb_marshal_load(code);
 	const VALUE iseq     = rb_iseq_load(iseq_ary, Qnil, Qnil);
 
@@ -523,7 +523,7 @@ exerb_load_extension_library_from_file(const char *filepath)
 static HMODULE
 exerb_load_library(const FILE_ENTRY_HEADER *file_entry)
 {
-	const char *base_of_file = exerb_get_file_from_entry(file_entry);
+	const char *base_of_file = exerb_get_file_from_entry1(file_entry);
 	const char *filepath     = exerb_get_name_from_entry(exerb_find_name_entry(file_entry->id));
 	return exerb_load_library_ex(base_of_file, file_entry->size_of_file, filepath, (int)file_entry->flag_no_replace_function);
 }

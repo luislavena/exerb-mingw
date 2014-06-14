@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class PreloadTestCase < Test::Unit::TestCase
+class PreloadTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-preload'
   end
 

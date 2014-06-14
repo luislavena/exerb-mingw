@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class Require1TestCase < Test::Unit::TestCase
+class Require1TestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-require1'
   end
 

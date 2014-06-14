@@ -2,10 +2,10 @@
 
 require 'testcase'
 
-class NestTestCase < Test::Unit::TestCase
+class NestTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-nest'
   end
 

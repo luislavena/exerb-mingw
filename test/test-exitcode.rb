@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class ExitCodeTestCase < Test::Unit::TestCase
+class ExitCodeTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-exitcode'
   end
 

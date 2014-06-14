@@ -175,9 +175,24 @@ exerb_get_name_from_entry(const NAME_ENTRY_HEADER *name_entry)
 }
 
 char*
-exerb_get_file_from_entry(const FILE_ENTRY_HEADER *file_entry)
+exerb_get_file_from_entry1(const FILE_ENTRY_HEADER *file_entry)
 {
 	return (char*)((DWORD)g_file_table_header + g_file_table_header->offset_of_pool + file_entry->offset_of_file);
+}
+
+VALUE
+exerb_get_file_from_entry2(const FILE_ENTRY_HEADER *file_entry)
+{
+	const VALUE code = rb_str_new(exerb_get_file_from_entry1(file_entry), file_entry->size_of_file);
+	if (file_entry->zipd)
+	{
+		VALUE code2;
+		rb_require("zlib");
+		code2 = rb_funcall(rb_const_get(rb_cObject, rb_intern("Zlib")), rb_intern("inflate"), 1, code);
+		return code2;
+	} else {
+		return code;
+	}
 }
 
 NAME_ENTRY_HEADER*

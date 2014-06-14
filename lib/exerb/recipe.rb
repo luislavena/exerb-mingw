@@ -172,11 +172,17 @@ class Exerb::Recipe::GeneralBlock
     @output  = block.delete('output')  || ""
     @core    = block.delete('core')    || ""
     @kcode   = block.delete('kcode')   || "none"
+    @zipd    = block.delete('zipd')    || nil
 
     @startup = nil if @startup.empty?
     @output  = nil if @output.empty?
     @core    = nil if @core.empty?
     @kcode.downcase!
+    if @zipd
+      ENV['exy_zipd'] = 'true'
+    else
+      ENV['exy_zipd'] = nil
+    end
 
     raise(Exerb::ExerbError, "#{filename}: unknown field at general block -- #{block.keys.join(', ')}") unless block.empty?
     raise(Exerb::ExerbError, "#{filename}: startup field isn't specified at general block") if @startup.nil?

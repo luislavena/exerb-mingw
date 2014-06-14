@@ -51,6 +51,7 @@ typedef struct {
 			BYTE flag_reserved:4;
 		};
 	};
+	BYTE zipd;
 } FILE_ENTRY_HEADER;
 
 #pragma pack(pop)

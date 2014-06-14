@@ -4,6 +4,7 @@
 #==============================================================================#
 
 require 'exerb/utility'
+require 'zlib'
 
 #==============================================================================#
 
@@ -18,13 +19,20 @@ class Exerb::FileTable
     @entries  = []
   end
 
-  def add(id, data, flag)
-    @entries << Exerb::FileTable::Entry.new(id, data, flag)
+  def add(id, data, flag, zipd = 0)
+    @entries << Exerb::FileTable::Entry.new(id, data, flag, zipd)
     return @entries.last
   end
 
   def add_from_file(id, path, flag)
-    return File.open(path, 'rb') { |file| self.add(id, file.read, flag) }
+    return File.open(path, 'rb') { |file|
+      if ENV['exy_zipd'] && /\.rbw?$/i =~ path
+        data = Zlib.deflate(file.read, 9)
+        self.add(id, data, flag, 1)
+      else
+        self.add(id, file.read, flag)
+      end
+    }
   end
 
   def add_ruby_script(id, data, flag = 0)
@@ -131,10 +139,11 @@ class Exerb::FileTable::Entry
   FLAG_TYPE_COMPILED_SCRIPT   = 0x06
   FLAG_NO_REPLACE_FUNCTION    = 0x08
 
-  def initialize(id, data, flag)
+  def initialize(id, data, flag, zipd)
     @id   = id
     @data = data
     @flag = flag
+    @zipd = zipd
   end
 
   attr_reader :id, :data, :flag
@@ -145,6 +154,7 @@ class Exerb::FileTable::Entry
     entry_header.offset_of_file = pool.size
     entry_header.size_of_file   = @data.size
     entry_header.flag_of_file   = @flag
+    entry_header.zipd           = @zipd
 
     return entry_header.pack
   end
@@ -164,12 +174,13 @@ class Exerb::FileTable::Entry::Header
     @offset_of_file = 0
     @size_of_file   = 0
     @flag_of_file   = 0
+    @zipd           = 0
   end
 
-  attr_accessor :id, :offset_of_file, :size_of_file, :flag_of_file
+  attr_accessor :id, :offset_of_file, :size_of_file, :flag_of_file, :zipd
 
   def pack
-    return [@id, @offset_of_file, @size_of_file, @flag_of_file].pack('SLLC')
+    return [@id, @offset_of_file, @size_of_file, @flag_of_file, @zipd].pack('SLLCC')
   end
 
 end # Exerb::FileTable::Entry::Header

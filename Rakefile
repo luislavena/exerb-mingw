@@ -1,5 +1,6 @@
 begin
   require 'devkit'
+  raise LoadError unless ENV['RI_DEVKIT'] # need RubyInstaller's DevKit, not devkit gem.
 rescue LoadError
   msg = "You need to install the devkit to compile exerb-mingw.\n"
   msg << "  http://rubyinstaller.org/add-ons/devkit/"
@@ -21,7 +22,7 @@ EXERB_CFLAGS = "-DRUBY19 -DRUBY19_COMPILED_CODE"
 
 C = OpenStruct.new
 c = RbConfig::CONFIG
-c['CFLAGS'] = ' -std=gnu99 -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Werror=pointer-arith -Werror=write-strings '
+c['CFLAGS'] = ' -Wall -std=gnu99 -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Werror=pointer-arith -Werror=write-strings '
 C.arch = c["arch"]
 C.cc = "#{c['CC'] || 'gcc'}"
 C.cflags = "#{c['CFLAGS'] || '-Os'}"
@@ -181,12 +182,24 @@ make_resource file_resource_gui_o, file_resource_rc, "GUI"
 link_cpp file_ruby_gui, :sources => (gui_sources + lib_sources + [file_exerb_def]), :gui => true, :dependencies => exerb_config_header
 link_cpp file_ruby_gui_rt, :sources => (gui_sources + [file_exerb_lib]), :rubylib => "", :gui => true, :dependencies => exerb_config_header
 
-task :default => [
+task :rm_tmp do
+  FileUtils.rm_rf('tmp') if File.directory?('tmp')
+end
+
+desc "generate cui and gui exa data"
+task :generate => [
   file_ruby_cui,
   file_ruby_cui_rt,
   file_ruby_gui,
-  file_ruby_gui_rt
+  file_ruby_gui_rt,
+  :rm_tmp
 ]
+
+desc "show infomation"
+task :default do
+  puts "Please use 'gem' to build and install gem."
+  puts "  This Rakefile used by generate data."
+end
 
 CLEAN.include('tmp')
 CLOBBER.include('data')

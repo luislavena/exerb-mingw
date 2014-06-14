@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class DotTestCase < Test::Unit::TestCase
+class DotTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-dot'
   end
 

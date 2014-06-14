@@ -4,7 +4,44 @@
 # $Id: mkexy,v 1.4 2008/06/13 23:54:45 arton Exp $
 #==============================================================================#
 
-exec("ruby", *(["-r", "exerb/mkexy"] + ARGV))
+require 'rubygems'
+require 'optparse'
+
+path1 = File.expand_path('../../lib', __FILE__)
+ENV['old_exy'] = nil
+ENV['exy_zipd'] = nil
+
+OptionParser.new do |opts|
+  opts.banner = "MKEXY  from ruby source file generate exy file\n\n" +
+    "Usage:\n" +
+    "  mkexy [mkexy_options]   [-- ruby_options] ruby_script   ===(same as)\n" +
+    "  ruby  -r exerb/mkexy    [   ruby_options] ruby_script\n"
+
+  opts.separator ""
+  opts.separator "mkexy specific options:"
+
+  opts.on("-o", "--old xxx.exy", "from old EXY file find core/resource/path info") do |exy|
+    ENV['old_exy'] = exy
+  end
+
+  opts.on("-c", "--compress", "use zlib deflate ruby source file") do |zipd|
+    ENV['exy_zipd'] = 'true'
+  end
+
+  opts.on("-h", "--help", "Show this message") do |v|
+    puts opts
+    exit 0
+  end
+
+  opts.on("-v", "--version", "Show version") do |v|
+    require "#{path1}/exerb/version"
+    puts "mkexy version: #{Exerb::VERSION}"
+    exit 0
+  end
+end.parse!
+
+
+exec(Gem.ruby, *(["-I#{path1}", "-rexerb/mkexy"] + ARGV))
 
 #==============================================================================#
 #==============================================================================#

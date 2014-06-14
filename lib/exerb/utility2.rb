@@ -13,18 +13,19 @@ module Exerb::Utility2
   def self.loaded_features(reject_list = [])
     reject_list << File.expand_path(__FILE__)
 
+    __LOADED_FEATURES = $LOADED_FEATURES.clone  # Don't change $LOADED_FEATURES
     if RUBY_VERSION >= "1.9.3"
       ['enc/encdb.so', 'enc/utf_16le.so',
         'enc/trans/transdb.so', 'enc/trans/utf_16_32.so',
         'enc/trans/single_byte.so'].each do |enc|
 
-        unless $LOADED_FEATURES.find { |f| f.include?(enc) }
-          $LOADED_FEATURES << enc
+        unless __LOADED_FEATURES.find { |f| f.include?(enc) }
+          __LOADED_FEATURES << enc
         end
       end
     end
 
-    features = $LOADED_FEATURES.collect { |filename|
+    features = __LOADED_FEATURES.collect { |filename|
       case filename.downcase
       when /\.rb$/o  then type = "script"
       when /\.so$/o  then type = "extension-library"
@@ -56,10 +57,12 @@ module Exerb::Utility2
   end
 
   def self.require_name(filename)
-    path = $LOAD_PATH.find { |path| filename.include?(path) }
+    # FIXED BUG, if relative path in $LOAD_PATH. like '.', '..', ..
+    path = $LOAD_PATH.find { |path| File.dirname(filename) == File.expand_path(path) }
+    path = $LOAD_PATH.find { |path| filename.start_with?(File.expand_path(path)) } if !path
     if path
       # remove both the path and the platform from the filename
-      return filename.gsub("#{path}/", "").gsub("#{RUBY_PLATFORM}/", "")
+      return filename.gsub("#{File.expand_path(path)}/", "").gsub("#{RUBY_PLATFORM}/", "")
     end
 
     filename

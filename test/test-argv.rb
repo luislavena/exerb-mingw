@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class ArgvTestCase < Test::Unit::TestCase
+class ArgvTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-argv'
   end
 

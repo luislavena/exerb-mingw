@@ -41,21 +41,10 @@ module ExerbCommand
     arg_core ||= Exerb::Utility.find_core_by_name(options[:corename], true) if options[:corename]
 
     recipe =
-      if /\.rb$/i =~ arg_fname
-        Exerb::Recipe.new({
-          'general' => {
-            'startup' => File.basename(arg_fname),
-            'output'  => File.expand_path(arg_fname).sub(/(\.rb)?$/i, '.exe'),
-            'core'    => arg_core,  # use arg value, or default value
-            'kcode'   => arg_kcode, # use arg value, or default value
-          },
-          'file' => {
-            File.basename(arg_fname) => {
-              'file' => File.expand_path(arg_fname),
-              'type' => 'script',
-            },
-          },
-        })
+      if /\.rbw?$/i =~ arg_fname
+        path1 = File.expand_path('../../lib', __FILE__)
+        system(Gem.ruby, "-I#{path1}", "-rexerb/mkexy", arg_fname)
+        Exerb::Recipe.load(arg_fname.chomp(File.extname(arg_fname)) + '.exy')
       else
         Exerb::Recipe.load(arg_fname)
       end

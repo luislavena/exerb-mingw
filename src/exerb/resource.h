@@ -16,7 +16,7 @@
 #define IDC_STATIC -1
 #endif
 
-#define EXERB_RES_EXERB_VERSION1 5,3,0,0
-#define EXERB_RES_EXERB_VERSION2 "5.3.0"
+#define EXERB_RES_EXERB_VERSION1 6,0,1,0
+#define EXERB_RES_EXERB_VERSION2 "6.0.1"
 
 #endif /* RESOURCE_H */

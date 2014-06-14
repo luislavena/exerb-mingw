@@ -2,8 +2,14 @@
 #==============================================================================#
 # $Id: testcase.rb,v 1.23 2008/06/13 23:53:34 arton Exp $
 #==============================================================================#
+gem 'minitest'
+require 'minitest/autorun'
 
-require 'test/unit/testcase'
+libpath = File.expand_path('../../lib', __FILE__)
+unless $:.include?(libpath)
+  $:.unshift(libpath)
+end
+
 require 'exerb/recipe'
 require 'exerb/executable'
 
@@ -12,7 +18,7 @@ require 'exerb/executable'
 module ExerbTestCase
 
   def setup
-    @name = self.name
+    @name = self.name2
     self.setup_exe
   end
 
@@ -20,18 +26,22 @@ module ExerbTestCase
     create_exe(@name)
   end
 
-  def name
+  def name2
     raise(NotImplementedError)
   end
 
   def create_exe(name, exename = name)
-    ver        = RUBY_VERSION.gsub('.','')
-    corefile   = "../data/exerb/ruby#{ver}c.exc"
-    recipe     = Exerb::Recipe.load("#{name}/#{exename}.exy")
-    archive    = recipe.create_archive()
-    executable = Exerb::Executable.read(corefile)
-    executable.rsrc.add_archive(archive)
-    executable.write("#{name}/#{exename}.exe")
+    Dir.chdir(name) {
+      ver        = RUBY_VERSION.gsub('.','')
+      corefile   = File.expand_path("../../data/exerb/ruby#{ver}c.exc", __FILE__)
+      mkexy = File.expand_path('../../bin/mkexy', __FILE__)
+      `#{Gem.ruby} #{mkexy} --old "old_#{exename}.exy" --  -I. "#{exename}.rb"`
+      recipe     = Exerb::Recipe.load("#{exename}.exy")
+      archive    = recipe.create_archive()
+      executable = Exerb::Executable.read(corefile)
+      executable.rsrc.add_archive(archive)
+      executable.write("#{exename}.exe")
+    }
   end
 
   def execute_cmd(cmd)

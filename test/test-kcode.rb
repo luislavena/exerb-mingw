@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class KcodeTestCase < Test::Unit::TestCase
+class KcodeTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-kcode'
   end
 

@@ -1,7 +1,8 @@
 *.ex?
 *.sublime-*
-.config
-data
-InstalledFiles
-src/exerb/config.h
-tmp
+/.config
+/InstalledFiles
+/src/exerb/config.h
+/data
+/tmp
+/exerb*.gem

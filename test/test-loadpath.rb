@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class LoadPathTestCase < Test::Unit::TestCase
+class LoadPathTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-loadpath'
   end
 

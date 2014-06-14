@@ -7,10 +7,10 @@ require 'testcase'
 
 #==============================================================================#
 
-class RegexpTestCase < Test::Unit::TestCase
+class RegexpTestCase < Minitest::Test
   include ExerbTestCase
 
-  def name
+  def name2
     return 'test-regexp'
   end
 
